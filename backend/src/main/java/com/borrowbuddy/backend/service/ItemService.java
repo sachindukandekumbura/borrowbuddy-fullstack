@@ -1,7 +1,6 @@
 package com.borrowbuddy.backend.service;
 
 import com.borrowbuddy.backend.model.Item;
-import com.borrowbuddy.backend.model.ItemStatus;
 import com.borrowbuddy.backend.repository.ItemRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,40 +25,35 @@ public class ItemService {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Item not found"
+                        "Item not found with ID: " + id
                 ));
     }
 
     public Item createItem(Item item) {
-        item.setId(null);
-
-        if (item.getStatus() == null) {
-            item.setStatus(ItemStatus.AVAILABLE);
-        }
-
         return itemRepository.save(item);
     }
 
-    public Item updateItem(Long id, Item newItem) {
+    public Item updateItem(Long id, Item updatedItem) {
+
         Item existingItem = getItemById(id);
 
-        existingItem.setName(newItem.getName());
-        existingItem.setDescription(newItem.getDescription());
-        existingItem.setCategory(newItem.getCategory());
-        existingItem.setOwnerName(newItem.getOwnerName());
-        existingItem.setLocation(newItem.getLocation());
-        existingItem.setConditionStatus(newItem.getConditionStatus());
-        existingItem.setImageUrl(newItem.getImageUrl());
-
-        if (newItem.getStatus() != null) {
-            existingItem.setStatus(newItem.getStatus());
-        }
+        existingItem.setName(updatedItem.getName());
+        existingItem.setDescription(updatedItem.getDescription());
+        existingItem.setCategory(updatedItem.getCategory());
+        existingItem.setStatus(updatedItem.getStatus());
 
         return itemRepository.save(existingItem);
     }
 
     public void deleteItem(Long id) {
-        Item item = getItemById(id);
-        itemRepository.delete(item);
+
+        if (!itemRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Item not found with ID: " + id
+            );
+        }
+
+        itemRepository.deleteById(id);
     }
 }
