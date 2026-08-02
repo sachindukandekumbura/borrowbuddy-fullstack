@@ -8,11 +8,12 @@ import {
   Route,
   Routes,
 } from 'react-router-dom'
-import Layout from './components/Layout'
-import DashboardPage from './pages/DashboardPage'
-import ItemsPage from './pages/ItemsPage'
-import RequestsPage from './pages/RequestsPage'
-import api from './services/api'
+
+import Layout from './components/Layout.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
+import ItemsPage from './pages/ItemsPage.jsx'
+import RequestsPage from './pages/RequestsPage.jsx'
+import api from './services/api.js'
 
 function App() {
   const [items, setItems] = useState([])
@@ -20,12 +21,15 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [notice, setNotice] = useState(null)
 
-  const showNotice = (message, type = 'success') => {
-    setNotice({
-      message,
-      type,
-    })
-  }
+  const showNotice = useCallback(
+    (message, type = 'success') => {
+      setNotice({
+        message,
+        type,
+      })
+    },
+    []
+  )
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -60,7 +64,7 @@ function App() {
     }
 
     setLoading(false)
-  }, [])
+  }, [showNotice])
 
   useEffect(() => {
     loadData()
@@ -80,6 +84,7 @@ function App() {
       return true
     } catch (error) {
       console.error(error)
+
       showNotice(
         error.response?.data?.message ||
           'Could not save the item.',
@@ -93,10 +98,12 @@ function App() {
   const deleteItem = async (itemId) => {
     try {
       await api.delete(`/items/${itemId}`)
+
       showNotice('Item deleted successfully.')
       await loadData()
     } catch (error) {
       console.error(error)
+
       showNotice(
         'Could not delete this item. It may have connected borrow requests.',
         'error'
@@ -120,6 +127,7 @@ function App() {
       return true
     } catch (error) {
       console.error(error)
+
       showNotice(
         error.response?.data?.message ||
           'Could not send the borrow request.',
@@ -144,6 +152,7 @@ function App() {
       await loadData()
     } catch (error) {
       console.error(error)
+
       showNotice(
         error.response?.data?.message ||
           'Could not update the request status.',
