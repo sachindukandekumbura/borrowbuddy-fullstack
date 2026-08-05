@@ -16,9 +16,11 @@ function Layout({ children, notice, onDismissNotice }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-mark">
-            <PackageCheck size={27} />
-          </div>
+          <img
+            className="brand-logo"
+            src="/borrowbuddy-logo.svg"
+            alt="BorrowBuddy logo"
+          />
 
           <div className="brand-copy">
             <strong>BorrowBuddy</strong>
@@ -71,7 +73,7 @@ function Layout({ children, notice, onDismissNotice }) {
         </div>
 
         <div className="sidebar-footer">
-          React + Spring Boot
+          Borrow. Share. Connect.
         </div>
       </aside>
 
